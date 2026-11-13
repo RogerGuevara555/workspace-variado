@@ -1,6 +1,6 @@
 
 
-def tablero_de_pistas(campo: list[list]) -> tuple:
+def tablero_de_pistas(campo : list[list], func) -> tuple:
     pistas = []
     casilla_mas_peligrosa_valor = -1
 
@@ -10,7 +10,7 @@ def tablero_de_pistas(campo: list[list]) -> tuple:
         for j in range(len(campo[i])):
 
             if campo[i][j] == 0:
-                suma = sum(ForEachDir(campo, i, j))
+                suma = sum(func(campo, i, j))
 
                 if suma > casilla_mas_peligrosa_valor:
                     casilla_mas_peligrosa_valor = suma
@@ -30,31 +30,34 @@ def tablero_de_pistas(campo: list[list]) -> tuple:
 
 def ForEachDir(campo: list[list], a: int, b: int) -> list:
     casillas_en_derredor = []
+    a_no_2 = a < len(campo) - 1
+    b_no_2 = b < len(campo[1]) - 1
+    # a=2
+    # b=0
     
-    
-    if a < len(campo) - 1:
+    if a_no_2:
         casillas_en_derredor.append(campo[a+1][b])
 
     if a > 0:
         casillas_en_derredor.append(campo[a-1][b])
 
-    if b < len(campo[1]) - 1:
+    if b_no_2:
         casillas_en_derredor.append(campo[a][b+1])
 
     if b > 0:
         casillas_en_derredor.append(campo[a][b-1])
 
-    if a < len(campo) - 1 and b < len(campo[1]) - 1:
+    if a_no_2 and b_no_2:
         casillas_en_derredor.append(campo[a+1][b+1])
 
-    if a < len(campo) - 1 and b > 0:
+    if a_no_2 and b > 0:
         casillas_en_derredor.append(campo[a+1][b-1])
 
-    if a > 0 and b < len(campo[1]) - 1:
+    if a > 0 and b_no_2:
         casillas_en_derredor.append(campo[a-1][b+1])
 
-    if a > 0 and b < len(campo[1]) - 1:
-        casillas_en_derredor.append(campo[a-1][b-1])
+    if a > 0 and b > 0:  # ese último "b > 0" era "b_no_2" y por eso se bugueaba, aunque el bug no afectaba mucho 
+        casillas_en_derredor.append(campo[a-1][b-1]) # en este caso ya que solo ocurría con las casillas minadas
 
     return casillas_en_derredor
 
@@ -88,6 +91,16 @@ campo3 = [
     [0, 0],
     [0, 0]
 ]
-print(ForEachDir(campo, 2, 0))
-print(ForEachDirR(campo, 2, 0))
-#print(tablero_de_pistas(campo))
+
+
+
+if __name__ == "__main__":
+
+    for i in range(len(campo)):
+        for j in range(len(campo[0])):
+            print(f"{i}x{j}")
+            print("Rodrigo: ", ForEachDir (campo, i, j))
+            print("Roger:   ", ForEachDirR(campo, i, j))
+            print()
+    print(tablero_de_pistas(campo, ForEachDir ))
+    print(tablero_de_pistas(campo, ForEachDirR))
